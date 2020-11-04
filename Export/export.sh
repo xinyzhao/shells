@@ -60,9 +60,9 @@ echo BUILD=$BUILD
 POD_REPO_UPDATE=false
 echo POD_REPO_UPDATE=$POD_REPO_UPDATE
 
-export LANG=en_US.UTF-8
 rm Podfile.lock
-if POD_REPO_UPDATE
+export LANG=en_US.UTF-8
+if [[ "$POD_REPO_UPDATE" == true ]]
 then
 pod install  --verbose --repo-update
 else
