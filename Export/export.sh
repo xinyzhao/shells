@@ -33,10 +33,12 @@ echo WORKSPACE=$WORKSPACE
 RELATIVE_PATH="Export"
 ARCHIVES_PATH="${RELATIVE_PATH}/Archives"
 echo ARCHIVES_PATH=$ARCHIVES_PATH
+mkdir $ARCHIVES_PATH
 
 DATE="$(date +%Y-%m-%d_%H.%M.%S)"
 DATE_PATH="${ARCHIVES_PATH}/${DATE}"
 echo DATE_PATH=$DATE_PATH
+mkdir $DATE_PATH
 
 OPTIONS_PATH="Options"
 OPTIONS_FILE="$PWD/${RELATIVE_PATH}/${OPTIONS_PATH}/${SCHEME_NAME}.plist"
@@ -53,15 +55,19 @@ echo PLIST=$PLIST
 
 BUILD=$(date +%Y.%m.%d.%H%M%S)
 echo BUILD=$BUILD
-
-mkdir $ARCHIVES_PATH
-mkdir $DATE_PATH
-
 /usr/libexec/PlistBuddy -c "Set CFBundleVersion $BUILD" "${PLIST}"
 
+POD_REPO_UPDATE=false
+echo POD_REPO_UPDATE=$POD_REPO_UPDATE
+
 export LANG=en_US.UTF-8
-pod deintegrate
+rm Podfile.lock
+if POD_REPO_UPDATE
+then
 pod install  --verbose --repo-update
+else
+pod install  --verbose
+fi
 
 xcodebuild clean -workspace ${WORKSPACE} -scheme ${SCHEME_NAME} -configuration Release
 xcodebuild archive -workspace ${WORKSPACE} -scheme ${SCHEME_NAME} -archivePath ${ARCHIVE_PATH}
