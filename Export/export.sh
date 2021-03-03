@@ -15,10 +15,12 @@ git fetch --tags --force --progress
 GIT_COMMIT=`git rev-parse refs/remotes/origin/${GIT_BRANCH}^{commit}`
 GIT_COMMIT_AUTHOR=`git log --pretty=format:"%an" ${GIT_COMMIT} -1`
 GIT_COMMIT_MESSAGE=`git log --pretty=format:"%s" ${GIT_COMMIT} -1`
+GIT_COMMIT_SUMMARY=${GIT_COMMIT: 0: 8}
 GIT_COMMIT_TIME=`git log --pretty=format:"%ci" ${GIT_COMMIT} -1`
 echo "Commit: ${GIT_COMMIT}"
-echo "Commit message: ${GIT_COMMIT_MESSAGE}"
 echo "Commit by ${GIT_COMMIT_AUTHOR} at ${GIT_COMMIT_TIME}"
+echo "Commit message: ${GIT_COMMIT_MESSAGE}"
+echo "Commit summary: ${GIT_COMMIT_SUMMARY}"
 git config core.sparsecheckout
 git checkout -f ${GIT_COMMIT}
 
@@ -53,9 +55,7 @@ echo ARCHIVE_PATH=$ARCHIVE_PATH
 PLIST="$PWD/${PROJECT_NAME}/main/${SCHEME_NAME}.plist"
 echo PLIST=$PLIST
 
-BUILD=$(date +%Y.%m.%d.%H%M%S)
-echo BUILD=$BUILD
-/usr/libexec/PlistBuddy -c "Set CFBundleVersion $BUILD" "${PLIST}"
+/usr/libexec/PlistBuddy -c "Set CFBundleVersion $GIT_COMMIT_SUMMARY" "${PLIST}"
 
 POD_REPO_UPDATE=false
 echo POD_REPO_UPDATE=$POD_REPO_UPDATE
